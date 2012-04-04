@@ -4,7 +4,7 @@ var Drupal = Drupal || { 'settings': {}, 'behaviors': {}, 'themes': {}, 'locale'
 /**
  * Set the variable that indicates if JavaScript behaviors should be applied
  */
-Drupal.jsEnabled = true;
+Drupal.jsEnabled = document.getElementsByTagName && document.createElement && document.createTextNode && document.documentElement && document.getElementById;
 
 /**
  * Attach all registered behaviors to a page element.
@@ -35,10 +35,12 @@ Drupal.jsEnabled = true;
  */
 Drupal.attachBehaviors = function(context) {
   context = context || document;
-  // Execute all of them.
-  jQuery.each(Drupal.behaviors, function() {
-    this(context);
-  });
+  if (Drupal.jsEnabled) {
+    // Execute all of them.
+    jQuery.each(Drupal.behaviors, function() {
+      this(context);
+    });
+  }
 };
 
 /**
@@ -147,7 +149,7 @@ Drupal.formatPlural = function(count, singular, plural, args) {
   else {
     args['@count['+ index +']'] = args['@count'];
     delete args['@count'];
-    return Drupal.t(plural.replace('@count', '@count['+ index +']'));
+    return Drupal.t(plural.replace('@count', '@count['+ index +']'), args);
   }
 };
 
